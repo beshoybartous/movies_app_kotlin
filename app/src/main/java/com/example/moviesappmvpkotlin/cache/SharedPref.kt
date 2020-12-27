@@ -1,27 +1,29 @@
 package com.example.moviesappmvpkotlin.cache
 
-object SharedPref {
-    @JvmStatic
-    val moviesIDMap = mutableSetOf<Int>()
+import android.util.Log
 
-    @JvmStatic
+object SharedPref {
+    public val moviesIDMap = mutableSetOf<Int>()
+
     fun setMoviesIDMap(list: List<Int>) {
         for (elem in list) {
-            moviesIDMap.plus(elem)
+            moviesIDMap.add(elem)
         }
     }
 
-    @JvmStatic
+
     fun addValue(id: Int) {
-        moviesIDMap.plus(id)
+        moviesIDMap.add(id)
+        Log.d("isIndatabase", "bind: ${moviesIDMap.size}")
+
     }
 
-    @JvmStatic
     fun removeValue(id: Int) {
         moviesIDMap.remove(id)
+        Log.d("isIndatabase", "bind: ${moviesIDMap.size}")
+
     }
 
-    @JvmStatic
     fun contain(id: Int): Boolean {
         return moviesIDMap.contains(id)
     }

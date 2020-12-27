@@ -1,6 +1,7 @@
 package com.example.moviesappmvpkotlin.ui.movies.popular_movies
 
 import android.content.Context
+import android.util.Log
 import com.example.moviesappmvpkotlin.base.BasePresenter
 import com.example.moviesappmvpkotlin.model.MovieModel
 import com.example.moviesappmvpkotlin.model.payload.MoviePayLoad
@@ -8,18 +9,22 @@ import com.example.moviesappmvpkotlin.model.payload.toMap
 import com.example.moviesappmvpkotlin.model.response.MovieResponse
 import com.example.moviesappmvpkotlin.model.toEntity
 import com.example.moviesappmvpkotlin.network.EndPoints
-import com.example.moviesappmvpkotlin.ui.movies.top_rated_movies.TopRatedMoviesView
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PopularMoviesPresenter (private val view: PopularMoviesView, override val context: Context) :
     BasePresenter(view, context) {
     fun getData(parameter: MoviePayLoad){
         coroutineScope.launch {
-            val result = async(Dispatchers.IO){
-                networkManager.getData(EndPoints.POPULAR_MOVIES,parameter.toMap, MovieResponse::class.java)
-            }.await()
+            val result = withContext(Dispatchers.IO) {
+                 networkManager.getData(
+                    EndPoints.POPULAR_MOVIES,
+                    parameter.toMap,
+                    MovieResponse::class.java
+                )
+
+            }
             result?.let {
                 view.getMovies(it)
             }
@@ -28,26 +33,31 @@ class PopularMoviesPresenter (private val view: PopularMoviesView, override val 
 
     fun insertData(movie: MovieModel){
         coroutineScope.launch {
-            val result = async(Dispatchers.IO){
-                database.movieDao().insert(movie.toEntity)
-            }.await()
+            val result = withContext(Dispatchers.IO) {
+                 database.movieDao().insert(movie.toEntity)
+            }
+            Log.d("resultis", "insertData: $result")
+            if(result!=null &&  result.toInt()!=-1){
+                Log.d("resultis", "insertData: $result")
 
-            if(result!=null &&  result.toInt()==-1){
                 view.isInserted(result.toInt())
             }
+
         }
     }
 
     fun deleteData(movie: MovieModel){
         coroutineScope.launch {
-            val result=async(Dispatchers.IO){
-                database.movieDao().delete(movie.toEntity)
-            }.await()
+            val result = withContext(Dispatchers.IO) {
+                 database.movieDao().delete(movie.toEntity)
+
+            }
+            Log.d("deltesucc", "deleteData: $result")
             if(result==0){
                 view.isDeleted(-1)
             }
             else{
-                view.isDeleted(result)
+                view.isDeleted(movie.id!!)
             }
         }
     }

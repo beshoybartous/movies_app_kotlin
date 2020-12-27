@@ -10,6 +10,7 @@ import com.example.moviesappmvpkotlin.model.eventbus.MovieEvent
 import com.example.moviesappmvpkotlin.model.payload.MoviePayLoad
 import com.example.moviesappmvpkotlin.model.response.MovieResponse
 import com.example.moviesappmvpkotlin.network.EndPoints
+import com.example.moviesappmvpkotlin.ui.movie_detail.MovieDetail
 import com.example.moviesappmvpkotlin.ui.movies.MovieClickListener
 import com.example.moviesappmvpkotlin.ui.movies.MoviesAdapter
 import org.greenrobot.eventbus.EventBus
@@ -82,12 +83,13 @@ class TopRateMovies : BaseFragment<TopRatedMoviesPresenter, FragmentTopRatedMovi
     }
 
     override fun isDeleted(id: Int) {
-        TODO("Not yet implemented")
+        SharedPref.removeValue(id)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCLick(movie: MovieModel?) {
-        SharedPref.removeValue(id)
-        adapter.notifyDataSetChanged()
+        MovieDetail.startMovieDetailActivity(requireContext(), movie!!)
+
     }
 
     override fun addToFavourite(movie: MovieModel?) {

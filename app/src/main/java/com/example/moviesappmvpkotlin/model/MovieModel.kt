@@ -1,10 +1,13 @@
 package com.example.moviesappmvpkotlin.model
 
+import android.os.Parcelable
 import com.example.moviesappmvpkotlin.database.MovieEntity
 import com.example.moviesappmvpkotlin.database.toModel
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class MovieModel(
     @SerializedName("popularity")
     @Expose
@@ -49,7 +52,7 @@ data class MovieModel(
     @SerializedName( "release_date")
     @Expose
     val releaseDate: String? = null
-)
+): Parcelable
 
 val MovieModel.getPoster: String
     get() = (posterPath?.let { "http://image.tmdb.org/t/p/w500$posterPath" }

@@ -5,6 +5,7 @@ import com.example.moviesappmvpkotlin.cache.SharedPref
 import com.example.moviesappmvpkotlin.databinding.FragmentFavouriteMoviesBinding
 import com.example.moviesappmvpkotlin.model.MovieModel
 import com.example.moviesappmvpkotlin.model.eventbus.MovieEvent
+import com.example.moviesappmvpkotlin.ui.movie_detail.MovieDetail
 import com.example.moviesappmvpkotlin.ui.movies.MovieClickListener
 import com.example.moviesappmvpkotlin.ui.movies.MoviesAdapter
 import org.greenrobot.eventbus.EventBus
@@ -46,7 +47,7 @@ class FavouriteMovies : BaseFragment<FavouriteMoviesPresenter, FragmentFavourite
     override fun getMovies(movies: List<MovieModel>) {
         movies.let {
             if(it.isNotEmpty()){
-                adapter.updateList(it)
+                adapter.moviesList= it as MutableList<MovieModel>
             }
         }
     }
@@ -59,14 +60,14 @@ class FavouriteMovies : BaseFragment<FavouriteMoviesPresenter, FragmentFavourite
     }
 
     override fun onCLick(movie: MovieModel?) {
-        TODO("Not yet implemented")
+        MovieDetail.startMovieDetailActivity(requireContext(), movie!!)
     }
 
     override fun addToFavourite(movie: MovieModel?) {
-        TODO("Not yet implemented")
+        //("Not yet implemented")
     }
 
     override fun removeFromFavourite(model: MovieModel?) {
-        TODO("Not yet implemented")
+        presenter.deleteData(model!!)
     }
 }

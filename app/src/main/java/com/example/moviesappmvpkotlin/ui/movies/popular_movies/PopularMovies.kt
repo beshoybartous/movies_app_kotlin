@@ -1,20 +1,19 @@
 package com.example.moviesappmvpkotlin.ui.movies.popular_movies
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesappmvpkotlin.base.BaseFragment
 import com.example.moviesappmvpkotlin.cache.SharedPref
 import com.example.moviesappmvpkotlin.databinding.FragmentPopularMoviesBinding
-import com.example.moviesappmvpkotlin.databinding.FragmentTopRatedMoviesBinding
 import com.example.moviesappmvpkotlin.model.MovieModel
 import com.example.moviesappmvpkotlin.model.eventbus.MovieEvent
 import com.example.moviesappmvpkotlin.model.payload.MoviePayLoad
 import com.example.moviesappmvpkotlin.model.response.MovieResponse
 import com.example.moviesappmvpkotlin.network.EndPoints
+import com.example.moviesappmvpkotlin.ui.movie_detail.MovieDetail
 import com.example.moviesappmvpkotlin.ui.movies.MovieClickListener
 import com.example.moviesappmvpkotlin.ui.movies.MoviesAdapter
-import com.example.moviesappmvpkotlin.ui.movies.top_rated_movies.TopRatedMoviesPresenter
-import com.example.moviesappmvpkotlin.ui.movies.top_rated_movies.TopRatedMoviesView
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -81,16 +80,23 @@ class PopularMovies : BaseFragment<PopularMoviesPresenter, FragmentPopularMovies
 
     override fun isInserted(id: Int) {
         SharedPref.addValue(id)
+        Log.d("isIndatabase", "bind: ${SharedPref.moviesIDMap.size}")
+
         adapter.notifyDataSetChanged()
     }
 
     override fun isDeleted(id: Int) {
-        TODO("Not yet implemented")
+        if(id!=-1) {
+            SharedPref.removeValue(id)
+            adapter.notifyDataSetChanged()
+        }
     }
 
     override fun onCLick(movie: MovieModel?) {
-        SharedPref.removeValue(id)
-        adapter.notifyDataSetChanged()
+        MovieDetail.startMovieDetailActivity(requireContext(), movie!!)
+
+//        SharedPref.removeValue(id)
+//        adapter.notifyDataSetChanged()
     }
 
     override fun addToFavourite(movie: MovieModel?) {

@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_top_rated_movies" />
     <fragment
         android:id="@+id/favourite_movies_fragment"
-        android:name="com.example.moviesappmvp.ui.favouritefragment.FavouriteMoviesFragment"
+        android:name="com.example.moviesappmvpkotlin.ui.movies.favourite_movies.FavouriteMovies"
         android:label="favourite_movies_fragment"
         tools:layout="@layout/fragment_favourite_movies" />
     <fragment

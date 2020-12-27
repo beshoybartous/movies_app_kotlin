@@ -1,14 +1,13 @@
 package com.example.moviesappmvpkotlin.ui.movies.favourite_movies
 
 import android.content.Context
-import android.graphics.Movie
 import com.example.moviesappmvpkotlin.base.BasePresenter
 import com.example.moviesappmvpkotlin.database.toModel
 import com.example.moviesappmvpkotlin.model.MovieModel
 import com.example.moviesappmvpkotlin.model.toEntity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class FavouriteMoviesPresenter(
@@ -17,9 +16,10 @@ class FavouriteMoviesPresenter(
     BasePresenter(view, context) {
     fun getFavouriteMovies(){
         coroutineScope.launch {
-            val result= async(Dispatchers.IO){
-                database.movieDao().getMovies()
-            }.await()
+            val result = withContext(Dispatchers.IO) {
+                 database.movieDao().getMovies()
+
+            }
             result?.let {
                 val movieModelList= mutableListOf<MovieModel>()
                 for (movie in it) {
@@ -27,19 +27,20 @@ class FavouriteMoviesPresenter(
                 }
                 view.getMovies(movieModelList)
             }
+
         }
     }
 
     fun deleteData(movie: MovieModel){
         coroutineScope.launch {
-            val result=async(Dispatchers.IO){
+            val result= withContext(Dispatchers.IO) {
                 database.movieDao().delete(movie.toEntity)
-            }.await()
+            }
             if(result==0){
                 view.isDeleted(-1)
             }
             else{
-                view.isDeleted(result)
+                view.isDeleted(movie.id!!)
             }
         }
     }

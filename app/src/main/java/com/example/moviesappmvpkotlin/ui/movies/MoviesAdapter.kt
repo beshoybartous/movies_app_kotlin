@@ -2,6 +2,8 @@ package com.example.moviesappmvpkotlin.ui.movies
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesappmvpkotlin.R
@@ -13,18 +15,19 @@ import com.squareup.picasso.Picasso
 
 public class MoviesAdapter( val movieClickListener: MovieClickListener) :
     RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
-    var moviesList = mutableListOf<MovieModel>()
+     var moviesList = mutableListOf<MovieModel>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+
         return MovieViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.bind(moviesList[position])
+        holder.bind(moviesList[position],movieClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -39,6 +42,8 @@ public class MoviesAdapter( val movieClickListener: MovieClickListener) :
         for (movie in moviesList){
             movie.id?.equals(id)?.let {
                 moviesList.remove(movie)
+                notifyDataSetChanged()
+                return
             }
         }
     }
@@ -47,23 +52,25 @@ public class MoviesAdapter( val movieClickListener: MovieClickListener) :
         RecyclerView.ViewHolder(binding.root) {
         var isInDatabase = false
 
-        fun bind(movie: MovieModel) {
+        fun bind(movie: MovieModel,movieClickListener:MovieClickListener) {
             isInDatabase = SharedPref.contain(movie.id!!)
+            Log.d("isIndatabase", "bind: ${SharedPref.moviesIDMap.size}")
             if (isInDatabase) {
                 binding.btnFavourite.setImageResource(R.drawable.ic_favorite)
             } else {
                 binding.btnFavourite.setImageResource(R.drawable.ic_not_favourite)
             }
-//            if (view.getId() == R.id.btn_favourite) {
-//                if (!isInDatabase) {
-//                    movieClickListener.addToFavourite(movieModel.get(position))
-//                } else {
-//                    movieClickListener.removeFromFavourite(movieModel.get(position))
-//                }
-//            } else {
-//                movieClickListener.onCLick(movieModel.get(position))
-//            }
-            Log.d("tes1000000", movie.getPoster)
+            binding.btnFavourite.setOnClickListener {
+                if (!isInDatabase) {
+                    movieClickListener.addToFavourite(movie)
+                } else {
+                    movieClickListener.removeFromFavourite(movie)
+                }
+            }
+            binding.root.setOnClickListener {
+                movieClickListener.onCLick(movie)
+            }
+
 
             Picasso.get().load(movie.getPoster)
                 .into(binding.ivMoviePoster)
